@@ -1,0 +1,5 @@
+{
+  "name": "Book Booking System",
+  "description": "An application for students to book books for various subjects. It allows administrators to dynamically add subjects and their codes, generates custom booking codes, facilitates sending WhatsApp confirmations, and allows for exporting booking data to an Excel spreadsheet.",
+  "requestFramePermissions": []
+}
