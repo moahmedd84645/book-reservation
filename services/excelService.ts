@@ -6,6 +6,7 @@ interface ExcelRow {
   'اسم الطالب': string;
   'رقم الهاتف': string | number;
   'المادة المحجوزة': string;
+  [key: string]: any; // Allow other potential columns from the Excel file
 }
 
 
