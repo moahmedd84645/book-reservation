@@ -291,7 +291,7 @@ const App: React.FC = () => {
       case 'form':
         return <BookingForm onAddBooking={handleAddBooking} availableSubjects={availableSubjects} />;
       case 'list':
-        return <BookingList bookings={bookings} onImport={handleImportBookings} onEdit={handleStartEdit} onDelete={handleDeleteBooking} onSendWhatsApp={handleResendWhatsApp} />;
+        return <BookingList bookings={bookings} availableSubjects={availableSubjects} onImport={handleImportBookings} onEdit={handleStartEdit} onDelete={handleDeleteBooking} onSendWhatsApp={handleResendWhatsApp} />;
       case 'subjects':
         return <SubjectManager subjects={availableSubjects} onAddSubject={handleAddSubject} onDeleteSubject={handleDeleteSubject} />;
       case 'settings':

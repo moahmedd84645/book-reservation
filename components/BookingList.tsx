@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { Booking } from '../types';
+import { Booking, AvailableSubject } from '../types';
 import { exportBookingsToExcel } from '../services/excelService';
 import { ExcelIcon } from './icons/ExcelIcon';
 import { ImportIcon } from './icons/ImportIcon';
@@ -11,21 +11,53 @@ import { toEasternArabicNumerals } from '../utils/numberConverter';
 
 interface BookingListProps {
   bookings: Booking[];
+  availableSubjects: AvailableSubject[];
   onImport: (file: File) => void;
   onEdit: (booking: Booking) => void;
   onDelete: (bookingId: string) => void;
   onSendWhatsApp: (booking: Booking) => void;
 }
 
-const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, onDelete, onSendWhatsApp }) => {
+const BookingList: React.FC<BookingListProps> = ({ bookings, availableSubjects, onImport, onEdit, onDelete, onSendWhatsApp }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('date-desc');
+  const [subjectFilter, setSubjectFilter] = useState('all');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredBookings = useMemo(() => {
-    return bookings.filter(booking =>
-      booking.studentName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [bookings, searchTerm]);
+  const processedBookings = useMemo(() => {
+    let tempBookings = [...bookings];
+
+    // Filter by subject
+    if (subjectFilter !== 'all') {
+      tempBookings = tempBookings.filter(booking =>
+        booking.subjects.some(subject => subject.name === subjectFilter)
+      );
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      tempBookings = tempBookings.filter(booking =>
+        booking.studentName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Sort
+    tempBookings.sort((a, b) => {
+      switch (sortOption) {
+        case 'date-asc':
+          return a.timestamp.getTime() - b.timestamp.getTime();
+        case 'name-asc':
+          return a.studentName.localeCompare(b.studentName);
+        case 'name-desc':
+          return b.studentName.localeCompare(a.studentName);
+        case 'date-desc':
+        default:
+          return b.timestamp.getTime() - a.timestamp.getTime();
+      }
+    });
+
+    return tempBookings;
+  }, [bookings, searchTerm, subjectFilter, sortOption]);
   
   const handleExport = () => {
     exportBookingsToExcel(bookings);
@@ -49,7 +81,7 @@ const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, o
     <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-lg">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 pb-4 border-b">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-          الحجوزات ({toEasternArabicNumerals(filteredBookings.length)})
+          الحجوزات ({toEasternArabicNumerals(processedBookings.length)})
         </h2>
         <div className="flex items-center gap-3">
           <input
@@ -76,23 +108,52 @@ const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, o
           </button>
         </div>
       </div>
+      
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div className="relative md:col-span-1">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <SearchIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+                type="text"
+                placeholder="ابحث عن اسم الطالب..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full bg-slate-50 border border-gray-300 rounded-lg py-2.5 pl-10 pr-10 text-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+        </div>
 
-      <div className="mb-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <SearchIcon className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="ابحث عن اسم الطالب..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="block w-full bg-slate-50 border border-gray-300 rounded-lg py-2 pl-10 pr-10 text-sm focus:ring-blue-500 focus:border-blue-500"
-          />
+        <div className="relative md:col-span-1">
+            <select
+                id="subject-filter"
+                value={subjectFilter}
+                onChange={(e) => setSubjectFilter(e.target.value)}
+                className="block w-full appearance-none bg-slate-50 border border-gray-300 rounded-lg py-2.5 px-4 text-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+                <option value="all">فلترة حسب المادة: الكل</option>
+                {availableSubjects.map(subject => (
+                    <option key={subject.id} value={subject.name}>{subject.name}</option>
+                ))}
+            </select>
+        </div>
+        
+        <div className="relative md:col-span-1">
+             <select
+                id="sort-options"
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="block w-full appearance-none bg-slate-50 border border-gray-300 rounded-lg py-2.5 px-4 text-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+                <option value="date-desc">ترتيب حسب: الأحدث أولاً</option>
+                <option value="date-asc">ترتيب حسب: الأقدم أولاً</option>
+                <option value="name-asc">ترتيب حسب: الاسم (أ - ي)</option>
+                <option value="name-desc">ترتيب حسب: الاسم (ي - أ)</option>
+            </select>
         </div>
       </div>
 
-      {filteredBookings.length > 0 ? (
+
+      {processedBookings.length > 0 ? (
         <>
           {/* Desktop Table */}
           <div className="overflow-x-auto hidden md:block">
@@ -106,7 +167,7 @@ const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, o
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredBookings.map((booking) => (
+                {processedBookings.map((booking) => (
                   <tr key={booking.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{booking.studentName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{toEasternArabicNumerals(booking.subjects.length)}</td>
@@ -134,7 +195,7 @@ const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, o
 
           {/* Mobile Card List */}
           <div className="md:hidden space-y-4">
-            {filteredBookings.map(booking => (
+            {processedBookings.map(booking => (
               <div key={booking.id} className="bg-slate-50 border border-slate-200 rounded-lg p-4 shadow-sm">
                   <div className="flex justify-between items-start">
                       <div>
@@ -168,10 +229,10 @@ const BookingList: React.FC<BookingListProps> = ({ bookings, onImport, onEdit, o
             <path vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" />
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">
-              {searchTerm ? 'لا توجد حجوزات تطابق بحثك' : 'لا توجد حجوزات بعد'}
+              {searchTerm || subjectFilter !== 'all' ? 'لا توجد حجوزات تطابق بحثك' : 'لا توجد حجوزات بعد'}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-              {searchTerm ? 'جرب البحث بكلمة أخرى.' : 'قم بإنشاء حجز جديد أو استيراد ملف للبدء.'}
+              {searchTerm || subjectFilter !== 'all' ? 'جرب تغيير الفلاتر أو كلمة البحث.' : 'قم بإنشاء حجز جديد أو استيراد ملف للبدء.'}
           </p>
         </div>
       )}
