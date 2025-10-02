@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AvailableSubject } from '../types';
 
@@ -48,7 +47,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onAddBooking, availableSubjec
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg max-w-2xl mx-auto">
+    <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg max-w-2xl mx-auto">
       <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-4">إنشاء حجز جديد</h2>
       <form onSubmit={handleSubmit} noValidate>
         <div className="space-y-6">

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BookingIcon } from './icons/BookingIcon';
 import { ListIcon } from './icons/ListIcon';
@@ -10,6 +9,8 @@ type View = 'form' | 'list' | 'subjects' | 'settings';
 interface SidebarProps {
   activeView: View;
   setActiveView: (view: View) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const NavItem: React.FC<{
@@ -31,9 +32,14 @@ const NavItem: React.FC<{
   </button>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isOpen, onClose }) => {
+  const handleNavigate = (view: View) => {
+    setActiveView(view);
+    onClose(); // Close sidebar on mobile after navigation
+  };
+  
   return (
-    <aside className="w-64 bg-white shadow-lg p-4 flex flex-col">
+    <aside className={`w-64 bg-white shadow-lg p-4 flex flex-col fixed md:relative inset-y-0 right-0 z-30 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} md:translate-x-0`}>
       <div className="flex items-center gap-3 mb-8 px-2">
          <div className="bg-blue-600 p-2 rounded-lg">
            <svg className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,25 +55,25 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView }) => {
           icon={<BookingIcon className="h-6 w-6" />}
           label="حجز جديد"
           isActive={activeView === 'form'}
-          onClick={() => setActiveView('form')}
+          onClick={() => handleNavigate('form')}
         />
         <NavItem
           icon={<ListIcon className="h-6 w-6" />}
           label="قائمة الحجوزات"
           isActive={activeView === 'list'}
-          onClick={() => setActiveView('list')}
+          onClick={() => handleNavigate('list')}
         />
         <NavItem
           icon={<SubjectsIcon className="h-6 w-6" />}
           label="إدارة المواد"
           isActive={activeView === 'subjects'}
-          onClick={() => setActiveView('subjects')}
+          onClick={() => handleNavigate('subjects')}
         />
         <NavItem
           icon={<SettingsIcon className="h-6 w-6" />}
           label="الإعدادات"
           isActive={activeView === 'settings'}
-          onClick={() => setActiveView('settings')}
+          onClick={() => handleNavigate('settings')}
         />
       </nav>
     </aside>

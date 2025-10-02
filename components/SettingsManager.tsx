@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { toEasternArabicNumerals } from '../utils/numberConverter';
 
@@ -28,7 +27,7 @@ const SettingsManager: React.FC<SettingsManagerProps> = ({ template, onTemplateC
 
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg">
+    <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-lg">
       <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-4">إعدادات رسالة واتساب</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>

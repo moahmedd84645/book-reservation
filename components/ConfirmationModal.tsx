@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Booking } from '../types';
 import { WhatsAppIcon } from './icons/WhatsAppIcon';
 import { toEasternArabicNumerals } from '../utils/numberConverter';
@@ -35,6 +34,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ booking, onClose,
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // Automatically open WhatsApp when the modal appears.
+  useEffect(() => {
+    handleSendWhatsApp();
+  }, []);
+
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center p-4 z-50 transition-opacity" aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="bg-white rounded-lg shadow-xl transform transition-all sm:max-w-lg w-full">
@@ -51,12 +56,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ booking, onClose,
                 <p className="text-sm text-gray-600">
                   تأكيد حجز لـ <strong className="font-semibold">{booking.studentName}</strong>.
                 </p>
+                <p className="text-xs text-yellow-800 bg-yellow-100 p-2 rounded-md mt-3 text-center">
+                  جاري فتح واتساب لإرسال رسالة التأكيد...
+                </p>
                 <div className="mt-3 max-h-48 overflow-y-auto pr-2">
                   <p className="text-sm text-gray-800 font-medium">أكواد الحجز الخاصة بك هي:</p>
                   <ul className="list-disc list-inside mt-1 space-y-1 text-sm text-gray-600">
                     {booking.subjects.map(subject => (
                       <li key={subject.code}>
-                        {subject.name}: <span className="font-mono bg-gray-100 px-2 py-1 rounded">{toEasternArabicNumerals(subject.code)}</span>
+                        {subject.name}: <span className="bg-gray-100 px-2 py-1 rounded font-semibold">{toEasternArabicNumerals(subject.code)}</span>
                       </li>
                     ))}
                   </ul>
@@ -72,7 +80,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ booking, onClose,
             className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:w-auto sm:text-sm"
           >
             <WhatsAppIcon className="h-5 w-5 ml-2" />
-            إرسال عبر واتساب
+            إعادة الإرسال
           </button>
           <button
             type="button"

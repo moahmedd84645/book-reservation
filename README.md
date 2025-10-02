@@ -1,20 +1,17 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Book Booking System
 
-# Run and deploy your AI Studio app
+This is a comprehensive book booking system designed for university students. It allows administrators to manage subjects, track student bookings, generate unique codes for each booking, send confirmations via WhatsApp, and export all data to an Excel file.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/14n2j8LE7VXTcH22yr3RL1WtMrcG5kZO1
+- **New Bookings:** A simple form to add new student bookings.
+- **Booking List:** View, search, edit, and delete all existing bookings.
+- **Subject Management:** Dynamically add or remove available subjects and their code prefixes.
+- **WhatsApp Integration:** Automatically generate and send a formatted confirmation message to students via WhatsApp.
+- **Excel Export/Import:** Export all booking data into a structured Excel sheet, or import bookings from a pre-formatted Excel file.
+- **Persistent Storage:** All data (bookings, subjects, settings) is saved in the browser's local storage, so you don't lose your data on refresh.
+- **Duplicate Prevention:** Prevents adding a new booking with the same student name and phone number.
 
-## Run Locally
+## Deployment
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+This project is configured for easy deployment on platforms like Vercel or Netlify. Simply connect your Git repository and deploy.

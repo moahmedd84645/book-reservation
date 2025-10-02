@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AvailableSubject } from '../types';
 import { DeleteIcon } from './icons/DeleteIcon';
@@ -30,8 +29,8 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-4">إدارة المواد الدراسية</h2>
+    <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-4">إدارة المواد</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <input
           type="text"
@@ -56,31 +55,51 @@ const SubjectManager: React.FC<SubjectManagerProps> = ({ subjects, onAddSubject,
       </div>
       {error && <p className="text-xs text-red-600 mb-4 text-center">{error}</p>}
       
-      <div className="mt-6 overflow-x-auto">
+      <div className="mt-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">المواد المتاحة حالياً ({subjects.length})</h3>
         {subjects.length > 0 ? (
-          <table className="min-w-full divide-y divide-gray-200">
-             <thead className="bg-slate-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">اسم المادة</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الرمز</th>
-                <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">إجراء</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+          <>
+            {/* Desktop Table */}
+            <div className="overflow-x-auto hidden md:block">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">اسم المادة</th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">الرمز</th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">إجراء</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {subjects.map(s => (
+                    <tr key={s.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{s.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{s.prefix}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <button onClick={() => onDeleteSubject(s.id)} className="text-red-600 hover:text-red-900 transition-colors p-2 rounded-full hover:bg-red-100" title="حذف المادة">
+                          <DeleteIcon className="h-5 w-5"/>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile List */}
+            <div className="md:hidden space-y-3">
               {subjects.map(s => (
-                <tr key={s.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{s.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 bg-slate-100 rounded-full text-center">{s.prefix}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <button onClick={() => onDeleteSubject(s.id)} className="text-red-600 hover:text-red-900 transition-colors p-2 rounded-full hover:bg-red-100">
-                      <DeleteIcon className="h-5 w-5"/>
-                    </button>
-                  </td>
-                </tr>
+                <div key={s.id} className="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
+                  <div>
+                    <p className="font-medium text-gray-900">{s.name}</p>
+                    <p className="text-sm font-mono text-gray-600">{s.prefix}</p>
+                  </div>
+                  <button onClick={() => onDeleteSubject(s.id)} className="text-red-600 hover:text-red-900 transition-colors p-2 rounded-full hover:bg-red-100" title="حذف المادة">
+                    <DeleteIcon className="h-5 w-5"/>
+                  </button>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         ) : (
           <p className="mt-2 text-sm text-gray-500 text-center py-8">لا توجد مواد متاحة. أضف مادة جديدة لبدء الحجز.</p>
         )}

@@ -1,4 +1,3 @@
-
 export interface Subject {
   name: string;
   code: string;
@@ -11,6 +10,7 @@ export interface AvailableSubject {
 }
 
 export interface Booking {
+  id: string;
   studentName: string;
   phone: string;
   subjects: Subject[];
